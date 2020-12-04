@@ -1,20 +1,24 @@
 import re
 
 
+def old_validation(low, high, char, password):
+    return int(low) <= password.count(char) <= int(high)
+
+
+def new_validation(low, high, char, password):
+    return ((password[int(low)-1] == char) ^
+         (password[int(high)-1] == char))
+
+
+def valid_password_count(lines, validation):
+    return len(
+        [password for [low, high, char, password] in lines
+         if validation(low, high, char, password)]
+    )
+
+
 with open('day02/input.data') as input:
-    lines = input.read().splitlines()
+    lines = [re.split('[- :]+', line) for line in input.read().splitlines()]
 
-split_lines = [re.split('[- :]+', line) for line in lines]
-
-solution_one = len(
-    [password for [low, high, char, password] in split_lines
-     if int(low) <= password.count(char) <= int(high)]
-)
-print(f'first solution: {solution_one}')
-
-solution_two = len(
-    [password for [low, high, char, password] in split_lines
-     if ((password[int(low)-1] == char) ^
-         (password[int(high)-1] == char))]
-)
-print(f'second solution: {solution_two}')
+print(f'first solution: {valid_password_count(lines, old_validation)}')
+print(f'second solution: {valid_password_count(lines, new_validation)}')
