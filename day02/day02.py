@@ -7,7 +7,7 @@ def old_validation(low, high, char, password):
 
 def new_validation(low, high, char, password):
     return ((password[int(low)-1] == char) ^
-         (password[int(high)-1] == char))
+            (password[int(high)-1] == char))
 
 
 def valid_password_count(lines, validation):

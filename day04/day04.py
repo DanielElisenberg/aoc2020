@@ -31,9 +31,8 @@ with open('day04/input.data') as input:
 naive_validation_count = count_valid_passports(
     'naive_passport_schema', passports
 )
-print(f'first solution: {naive_validation_count}')
-
 strict_validation_count = count_valid_passports(
     'strict_passport_schema', passports
 )
+print(f'first solution: {naive_validation_count}')
 print(f'second solution: {strict_validation_count}')

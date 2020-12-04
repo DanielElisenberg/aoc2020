@@ -2,6 +2,7 @@ from collections import deque
 from copy import deepcopy
 import numpy as np
 
+
 def examine_slope(map, angle):
     map = deepcopy(map)
     for y in range(len(map)):
@@ -19,6 +20,6 @@ print(f'first solution: {trees_encountered}')
 
 trees_encountered = np.product(
     [examine_slope(m, a) for (m, a) in [
-     (map, 1),(map, 3),(map, 5),(map, 7), (map[::2], 1)]]
+     (map, 1), (map, 3), (map, 5), (map, 7), (map[::2], 1)]]
 )
 print(f'second solution: {trees_encountered}')
