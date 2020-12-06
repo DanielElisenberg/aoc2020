@@ -2,11 +2,7 @@ import re
 
 
 def common_answers(group):
-    amount_of_people = len(group)
-    combined_answers = ''.join(group)
-    unique_answers = set(combined_answers)
-    return [answer for answer in unique_answers
-            if combined_answers.count(answer) == amount_of_people]
+    return set.intersection(*[set(answers) for answers in group])
 
 
 with open('day06/input.data') as input:
