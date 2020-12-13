@@ -1,6 +1,6 @@
 import itertools
 
-with open('day01/input.data') as input: 
+with open('day01/input.data') as input:
     expense_report = [int(line) for line in input.read().splitlines()]
 
 combinations = list(itertools.combinations(expense_report, 2))
