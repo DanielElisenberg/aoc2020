@@ -1,5 +1,9 @@
 from copy import deepcopy
 
+look_around = [
+    (-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)
+]
+
 
 def occupied_seats(seat_map):
     return len(
@@ -9,9 +13,6 @@ def occupied_seats(seat_map):
 
 def adjacent_occupied_seats(seat_map, location):
     (x, y) = location
-    look_around = [
-        (-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)
-    ]
     adjecent_seat_states = [
         seat_map.get((x+look_x, y+look_y), 'L')
         for (look_x, look_y) in look_around
@@ -22,9 +23,6 @@ def adjacent_occupied_seats(seat_map, location):
 def visible_occupied_seats(seat_map, location):
     (x, y) = location
     count = 0
-    look_around = [
-        (-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)
-    ]
     for (look_x, look_y) in look_around:
         visible_range = 0
         look_location_state = '.'
@@ -58,7 +56,8 @@ def second_rule(seat_map, location):
         return seat_map[location]
 
 
-def stable_seat_map(seat_map, rule):
+def stable_seat_map(initial_seat_map, rule):
+    seat_map = deepcopy(initial_seat_map)
     while True:
         new_seat_map = deepcopy(seat_map)
         for location in seat_map.keys():
@@ -77,10 +76,10 @@ with open('day11/input.data') as input:
             seat_map[(x, y)] = rows[y][x]
 
 occupied = occupied_seats(
-    stable_seat_map(deepcopy(seat_map), first_rule)
+    stable_seat_map(seat_map, first_rule)
 )
 print(f'first solution: {occupied}')
 occupied = occupied_seats(
-    stable_seat_map(deepcopy(seat_map), second_rule)
+    stable_seat_map(seat_map, second_rule)
 )
 print(f'second solution: {occupied}')
