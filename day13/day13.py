@@ -1,7 +1,8 @@
 import math
 
 
-def find_earliest_bus(bus_ids, earliest_time):
+def find_earliest_bus(bus_ids_with_offsets, earliest_time):
+    bus_ids = [id[0] for id in bus_ids_with_offsets]
     accumulate_ids = [id for id in bus_ids]
     while not all(time > earliest_time for time in accumulate_ids):
         for i in range(len(bus_ids)):
@@ -41,10 +42,10 @@ def timetables_align(bus_ids_with_offset, init_trip=0, idx=1, jump=1):
 with open('day13/input.data') as input:
     lines = [line for line in input.read().split('\n')]
     earliest_time = int(lines[0])
-    bus_ids = [int(id) for id in lines[1].split(',') if id != 'x']
+    bus_ids = [id for id in lines[1].split(',')]
+    bus_ids_with_offset = [(int(id), bus_ids.index(id)) for id in bus_ids if id != 'x']
 
-print(f'first solution: {find_earliest_bus(bus_ids, earliest_time)}')
-
-bus_ids = [id for id in lines[1].split(',')]
-bus_ids_with_offset = [(int(id), bus_ids.index(id)) for id in bus_ids if id != 'x']
-print(f'second solution: {timetables_align(bus_ids_with_offset)}')
+earliest_bus = find_earliest_bus(bus_ids_with_offset, earliest_time)
+print(f'first solution: {earliest_bus}')
+time_of_alignment = timetables_align(bus_ids_with_offset)
+print(f'second solution: {time_of_alignment}')
