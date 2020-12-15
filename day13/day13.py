@@ -43,7 +43,8 @@ with open('day13/input.data') as input:
     lines = [line for line in input.read().split('\n')]
     earliest_time = int(lines[0])
     bus_ids = [id for id in lines[1].split(',')]
-    bus_ids_with_offset = [(int(id), bus_ids.index(id)) for id in bus_ids if id != 'x']
+    bus_ids_with_offset = [(int(id), bus_ids.index(id))
+                           for id in bus_ids if id != 'x']
 
 earliest_bus = find_earliest_bus(bus_ids_with_offset, earliest_time)
 print(f'first solution: {earliest_bus}')
