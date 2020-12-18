@@ -1,9 +1,9 @@
 class Node:
 
-    def __init__(self, data):
+    def __init__(self, value):
         self.left = None
         self.right = None
-        self.value = data
+        self.value = value
 
     def get_value(self):
         if self.value.isdigit():
@@ -23,7 +23,8 @@ def value_or_nested_expression(line, i):
             if line[j] == ')':
                 open_parenthesis -= 1
             if open_parenthesis == 0:
-                return (parse_expression(line[i+1:j]), j+1)
+                inner_expression = parse_expression(line[i+1:j])
+                return (Node(str(inner_expression.get_value())), j+1)
     else:
         return (Node(line[i]), i+1)
 
@@ -31,10 +32,16 @@ def value_or_nested_expression(line, i):
 def parse_expression(line):
     (root, i) = value_or_nested_expression(line, 0)
     while i < len(line)-1:
-        new_root = Node(line[i])
-        new_root.left = root
-        (new_root.right, i) = value_or_nested_expression(line, i+1)
-        root = new_root
+        if line[i] == '+' and root.right is not None:
+            new_branch = Node(line[i])
+            new_branch.left = root.right
+            (new_branch.right, i) = value_or_nested_expression(line, i+1)
+            root.right = new_branch
+        else:
+            new_root = Node(line[i])
+            new_root.left = root
+            (new_root.right, i) = value_or_nested_expression(line, i+1)
+            root = new_root
     return root
 
 
