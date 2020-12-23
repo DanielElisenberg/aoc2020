@@ -1,75 +1,65 @@
-from collections import deque
-
-
-def pick_destination_cup(circle, current_cup):
-    current_cup_value = circle[0]
-    min_cup = min(circle)
-    max_cup = max(circle)
-    destination_cup = None
-
-    while destination_cup is None:
-        current_cup_value -= 1
-        if current_cup_value in circle:
-            destination_cup = circle.index(current_cup_value)
-        if current_cup_value < min_cup:
-            current_cup_value = max_cup + 1
-    return destination_cup
-
-
-def pick_up(circle):
-    circle.rotate(-1)
-    picked_up = [
-        circle.popleft(),
-        circle.popleft(),
-        circle.popleft()
-    ]
-    circle.rotate(1)
-    return picked_up
-
-
-def place_cups(circle, picked_up, destination_cup):
-    circle.rotate(-destination_cup-1)
-    for cup in picked_up:
-        circle.append(cup)
-    circle.rotate(destination_cup+4)
-
-
-def hundred_rounds(circle):
-    for _ in range(100):
-        current_cup = 0
-        picked_up = pick_up(circle)
-        destination_cup = pick_destination_cup(circle, current_cup)
-        place_cups(circle, picked_up, destination_cup)
-        circle.rotate(-1)
-
-    circle.rotate(-circle.index(1))
-    return ''.join([str(ch) for ch in circle if ch != 1])
-
-
-def run_moves(circle, times):
+def run_moves(circle_map, start_cup, times):
+    min_cup = min(circle_map.keys())
+    max_cup = max(circle_map.keys())
+    current_cup = start_cup
     for i in range(times):
-        print(i)
-        current_cup = 0
-        picked_up = pick_up(circle)
-        destination_cup = pick_destination_cup(circle, current_cup)
-        place_cups(circle, picked_up, destination_cup)
-        circle.rotate(-1)
-
-    circle.rotate(-circle.index(1))
-    return ''.join([str(ch) for ch in circle if ch != 1])
+        next_cup = circle_map[current_cup]
+        destination_cup = None
+        search_cup = current_cup - 1
+        while destination_cup is None:
+            if (
+                    search_cup not in [
+                        next_cup,
+                        circle_map[next_cup],
+                        circle_map[circle_map[next_cup]]
+                    ]
+                    and search_cup >= min_cup):
+                destination_cup = search_cup
+            elif search_cup < min_cup:
+                search_cup = max_cup
+            else:
+                search_cup -= 1
+        circle_map[current_cup] = circle_map[circle_map[circle_map[next_cup]]]
+        old_next = circle_map[destination_cup]
+        circle_map[destination_cup] = next_cup
+        circle_map[circle_map[circle_map[next_cup]]] = old_next
+        current_cup = circle_map[current_cup]
 
 
 def ten_million_moves(circle):
+    circle_map = {}
+
+    for i in range(len(circle)-1):
+        circle_map[circle[i]] = circle[i+1]
     max_cup = max(circle) + 1
-    while len(circle) < 1000000:
-        circle.append(max_cup)
+    circle_map[circle[-1]] = max_cup
+    while len(circle_map.keys()) < 999999:
+        circle_map[max_cup] = max_cup + 1
         max_cup += 1
-    run_moves(circle, 10000000)
-    return circle[1] * circle[2]
+    circle_map[max_cup] = circle[0]
+
+    run_moves(circle_map, circle[0], 10000000)
+    return circle_map[1] * circle_map[circle_map[1]]
+
+
+def hundred_moves(circle):
+    circle_map = {}
+    for i in range(len(circle)-1):
+        circle_map[circle[i]] = circle[i+1]
+    circle_map[circle[-1]] = circle[0]
+
+    run_moves(circle_map, circle[0], 100)
+
+    next_cup = circle_map[1]
+    circle_string = str(next_cup)
+    while True:
+        next_cup = circle_map[next_cup]
+        circle_string += str(next_cup)
+        if next_cup == 1:
+            break
+    return circle_string[:-1]
 
 
 input = '583976241'
-circle = deque([int(ch) for ch in input])
-print(f'first solution: {run_moves(circle, 100)}')
-circle = deque([int(ch) for ch in input])
-print(f'second solution: {ten_million_moves(circle)}')
+print(f'first solution: {hundred_moves([int(ch) for ch in input])}')
+print(f'second solution: {ten_million_moves([int(ch) for ch in input])}')
